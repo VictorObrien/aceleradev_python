@@ -1,31 +1,25 @@
 from main import get_temperature
 from unittest.mock import patch
 import pytest
-
-parametrized_values = [
-    (-14.235004, -51.92528, 62, 16),
-    (18.854793, -22.62783, 92, 33),
-    (-32.75395, 09.37813, 70, 21),
-]
+import requests
 
 
-@pytest.mark.parametrize("lat,lng,temperature,expected", parametrized_values)
-def test_get_temperature_by_lat_lng(lat, lng, temperature, expected):
+LATITUDE = -14.235004
+LONGITUDE = -51.92528
+TEMPETATURES = [(62, 16), (92, 33), (70, 21), (0, -17),
+                ('e', 'error'), (80, 26), (None, 'error'), (-4, -20)]
 
-    mock_get_patcher = patch('main.requests.get')
 
-    temperature = {
+@patch('main.requests.get')
+@pytest.mark.parametrize("farenheit, celcius", TEMPETATURES)
+def test_get_temperature_by_lat_lng(mock_requests_get, farenheit, celcius):
+
+    mock_requests_get.return_value.json.return_value = {
         "currently": {
-            "temperature": temperature
+            "temperature": farenheit
         }
     }
 
-    mock_get = mock_get_patcher.start()
+    response = get_temperature(LATITUDE, LONGITUDE)
 
-    mock_get.return_value.json.return_value = temperature
-
-    response = get_temperature(lat, lng)
-
-    mock_get_patcher.stop()
-
-    assert response == expected
+    assert celcius == response, "Actual result was {}".format(response)
