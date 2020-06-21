@@ -18,7 +18,7 @@
 </p>
 
 
-### :memo: Envie seu comentário!  
+### :memo:   Envie seu comentário!  
 
 Sinta-se a vontade para comentar e dar feedbacks  
 
